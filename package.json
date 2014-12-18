@@ -26,9 +26,9 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "each-series": "~1.0.0",
     "emitter-component": "~1.1.1",
-    "inherits": "~2.0.1"
+    "inherits": "~2.0.1",
+    "setimmediate": "~1.0.2"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
