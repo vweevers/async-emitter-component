@@ -47,6 +47,10 @@ Subscribe to `event`. Asynchronous listeners should match the number of event ar
 
 Executes all listeners for the event in order with the supplied data argument(s). The optional callback is called when all of the listeners are done, or if one of them returned an error.
 
+### `emitSync(event, [data, ..])`
+
+Emit synchronously, like the regular `Emitter.prototype.emit`.
+
 ## license
 
 [MIT](http://opensource.org/licenses/MIT) © Andreas Hultgren, Vincent Weevers
