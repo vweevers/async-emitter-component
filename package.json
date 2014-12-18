@@ -1,21 +1,33 @@
 {
-  "name": "async-eventemitter",
-  "version": "0.2.2",
-  "description": "Just like EventEmitter, but with support for callbacks and interuption of the listener-chain",
+  "name": "async-emitter-component",
+  "version": "0.0.1",
+  "description": "Event emitter with asynchronous listeners and interruption",
   "main": "index.js",
   "scripts": {
-    "test": "make test"
+    "test": "grunt test"
   },
   "keywords": [
     "event",
     "async",
     "eventemitter",
-    "callback"
+    "emitter"
   ],
-  "author": "Andreas Hultgren",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vweevers/async-emitter-component"
+  },
+  "bugs": {
+    "url": "https://github.com/vweevers/async-emitter-component/issues"
+  },
+  "homepage": "https://github.com/vweevers/async-emitter-component",
+  "authors": [
+    "Andreas Hultgren",
+    "Vincent Weevers"
+  ],
   "license": "MIT",
   "dependencies": {
     "each-series": "~1.0.0",
+    "emitter-component": "~1.1.1",
     "inherits": "~2.0.1"
   },
   "devDependencies": {

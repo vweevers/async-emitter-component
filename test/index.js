@@ -38,8 +38,7 @@ describe('on()', function () {
   it('should register an eventlistener', function () {
     events.on('test1', listener1);
     events.on('test1', listener2);
-    // commented out, because it's an Emitter implementation detail
-    // events._events.should.have.property('test1');
+    events.listeners('test1').should.eql([listener1, listener2]);
   });
 });
 
@@ -152,8 +151,7 @@ describe('once()', function () {
 
   it('should register eventlisteners', function () {
     events.once('test-once', listener1);
-    // commented out, because it's an Emitter implementation detail
-    // events._events.should.have.property('test-once');
+    events.listeners('test-once').should.have.length(1);
   });
 
   describe('eventlisteners', function () {
@@ -209,17 +207,17 @@ describe('removeAllListeners', function () {
 
   describe('(event)', function () {
     it('should remove all event listeners for event', function () {
-      events._events.should.have.property('test');
+      events.listeners('test').should.have.length(1);
       events.removeAllListeners('test');
-      events._events.should.not.have.property('test');
+      events.listeners('test').should.be.empty
     });
   });
 
   describe('()', function () {
     it('should remove all event listeners for all events', function () {
-      events._events.should.have.property('test2');
+      events.listeners('test2').should.have.length(1);
       events.removeAllListeners();
-      events._events.should.not.have.property('test2');
+      events.listeners('test2').should.be.empty;
     });
   });
 });

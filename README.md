@@ -1,91 +1,52 @@
-# AsyncEventEmitter
+# async-emitter-component
 
-> An EventEmitter that supports serial execution of asynchronous event listeners.
-> It also supports event listeners without callbacks (synchronous), as well as
-> interrupting the call-chain (similar to the DOM's e.stopPropagation()).
+> An event emitter that supports serial execution of asynchronous and synchronous event listeners. The call-chain can be interrupted, similar to the DOM's `e.stopPropagation()`.
 
+[![Dependency Status](https://img.shields.io/david/vweevers/async-emitter-component.svg?style=flat-square)](https://david-dm.org/vweevers/async-emitter-component)
 
-## Example
+## about
+
+This is a fork of [async-eventemitter](https://www.npmjs.com/package/async-eventemitter), with the following differences:
+
+- Using [emitter-component](https://www.npmjs.com/package/emitter-component) instead of [EventEmitter](https://nodejs.org/api/events.html)
+- Supports a variable number of arguments
+- No `before`, `after`, `at` or `first` methods, as I consider those to be out of scope.
+
+Because it supports regular (synchronous) listeners, it's a drop-in replacement for `emitter-component`.
+
+## example
 
 ```javascript
-var AsyncEventEmitter = require('async-eventemitter');
-var events = new AsyncEventEmitter();
+var AsyncEventEmitter = require('async-emitter-component');
+var emitter = new AsyncEventEmitter();
 
-events.on('test', function (e, next) {
-  // The next event listener will wait til this is done
-  setTimeout(next, 1000);
-});
-
-events
-  .on('test', function (e) {
-    // This is behaves a synchronous event listener (note the lack of a second
-    // callback argument)
-    console.log(e);
-    // { data: 'data' }
+emitter
+  .on('answer', function (question, answer) {
+    // Synchronous
+    console.log('the answer to %s is %s', question, answer);
   })
-  .on('test', function (e, next) {
-    // Even if you're not truly asynchronous you can use next() to stop propagation
-    next(new Error('You shall not pass'));
-  });
+  .on('answer', function (question, answer, next) {
+    // Asynchronous
+    next(new Error('I stopped propagation'));
+  })
 
-events.trigger('test', { data: 'data' }, function (err) {
-  // This is run after all of the event listeners are done
-  console.log(err);
-  // [Error: You shall not pass]
+emitter.emit('answer', 'life', 42, function done(err) {
+  console.log(err.message);
 });
 ```
 
-More examples are found in the `test`-folder.
+## usage
 
+Usage is nearly similar to [emitter-component](https://www.npmjs.com/package/emitter-component) and [EventEmitter](https://nodejs.org/api/events.html).
 
-## Important differences between AsyncEventEmitter the native EventEmitter
+### `on || once(event, [data, ..], [next])`
 
-The API and behavior of AsyncEventEmitter is as far as possible and meaningful
-identical to that of the native EventEmitter. However there are some important
-differences which should be noted.
+Subscribe to `event`. Asynchronous listeners should match the number of event arguments (2 in the example above).
 
-* Data sent to event listeners (`eg emit(data)`) must always be **zero** or
-  **one** argument, and can *not* be a function.
-* Event listeners will always recieve the data object, which may or may not be
-  undefined.
-* The second argument can only be a callback, and will only be supplied if
-  the event listener has an arity of two or more (eg `function(e, next){}`).
-* Event listeners with an arity of one or zero (eg without a callback argument
-  specified) will be treated as synchronous.
-* Even if all event listeners are synchronous, they will still be executed
-  asynchronously (through setImmediate) and thus code suceeding `.emit()` will
-  be executed before any event listeners.
-* Interupt the callback chain in async listeners by calling the callback with
-  the error as the first parameter.
+### `emit(event, [data, ..], [done])`
 
+Executes all listeners for the event in order with the supplied data argument(s). The optional callback is called when all of the listeners are done, or if one of them returned an error.
 
-## Usage
+## license
 
-### Unchanged
-
-For `addListener() on() once() removeListener() removeAllListeners()
-setMaxListeners() listeners()` see the [EventEmitter docs](http://nodejs.org/api/events.html),
-nothing new here.
-
-
-### `emit(event, [data], [callback])`
-
-Executes all listeners for the event in order with the supplied data argument.
-The optional callback is called when all of the listeners are done.
-
-## Contribution
-
-1. Create an issue and tell me what you're gonna do, just to make sure there's
-  no duplicate work
-2. Fork and branch your feature-branch of the develop branch
-3. Write tests for changed/added functionality and make sure you don't break
-  existing ones
-4. Adhere to existing code style
-5. Submit a pull-request to the develop branch
-
-
-## License
-
-**The MIT License (MIT)**
-
-Copyright © 2013 Andreas Hultgren
+[MIT](http://opensource.org/licenses/MIT) © Andreas Hultgren, Vincent Weevers
