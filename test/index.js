@@ -1,11 +1,7 @@
-'use strict';
-
-/*global it:true, describe:true*/
-/*jshint unused:false*/
-var should = require('should'),
-    AsyncEventEmitter = require('../.'),
-    events,
-    i;
+var should = require('should')
+  , AsyncEventEmitter = require('../')
+  , events
+  , i
 
 describe('An instance', function () {
   it('should be created', function () {
@@ -16,7 +12,6 @@ describe('An instance', function () {
 describe('on()', function () {
   function listener1 (e, callback) {
     // Ensure context is kept
-    /* jshint validthis:true */
     this.should.equal(events);
 
     setTimeout(function () {
@@ -43,7 +38,8 @@ describe('on()', function () {
   it('should register an eventlistener', function () {
     events.on('test1', listener1);
     events.on('test1', listener2);
-    events._events.should.have.property('test1');
+    // commented out, because it's an Emitter implementation detail
+    // events._events.should.have.property('test1');
   });
 });
 
@@ -58,8 +54,8 @@ describe('emit()', function () {
   });
 
   it('should emit with no argument', function (done) {
-    events.on('no-arg', function (e, next) {
-      (typeof e).should.equal('undefined');
+    events.on('no-arg', function (next) {
+      (typeof next).should.equal('function');
       next();
       done();
     });
@@ -78,12 +74,41 @@ describe('emit()', function () {
   });
 
   it('should emit with only callback argument', function (done) {
-    events.on('function-only', function (e, next) {
-      (typeof e).should.equal('undefined');
+    events.on('function-only', function (next) {
+      (typeof next).should.equal('function');
       next();
     });
 
     events.emit('function-only', done);
+  });
+
+  it('should emit with multiple arguments', function (done) {
+    events.on('more-data', function (a, b, next) {
+      a.should.equal(1);
+      b.should.equal(2);
+      next();
+      done();
+    });
+
+    events.emit('more-data', 1, 2);
+  });
+
+  it('should emit with multiple arguments and cb', function (done) {
+    events.on('more-data-cb', function (a, b, next) {
+      a.should.equal(1);
+      b.should.equal(2);
+      next();
+    });
+
+    var called = false
+    events.emit('more-data-cb', 1, 2, function(){
+      called = true
+    });
+
+    setImmediate(function() {
+      called.should.equal(true);
+      done()
+    })
   });
 });
 
@@ -99,11 +124,11 @@ describe('eventlisteners', function () {
 
 describe('next(err)', function () {
   it('should abort the callback chain', function (done) {
-    events.on('err', function (e, next) {
+    events.on('err', function (next) {
       next(new Error('ok'));
     });
 
-    events.on('err', function (e, next) {
+    events.on('err', function (next) {
       throw('Expected this function to not be called');
     });
 
@@ -114,46 +139,11 @@ describe('next(err)', function () {
   });
 });
 
-describe('newListener-events', function () {
-  // Use separate test-object to not break other tests
-  var events = new AsyncEventEmitter();
-
-  it('should supply the event listener as e and not next', function (done) {
-    function newListener (e) {
-      e.should.have.property('event').and.equal('newListener-test');
-      e.should.have.property('fn').and.equal(test);
-      done();
-    }
-
-    function test () {}
-
-    events.on('newListener', newListener);
-    events.on('newListener-test', test);
-  });
-});
-
-describe('removeListener-events', function () {
-  var events = new AsyncEventEmitter();
-
-  it('should supply the event listener as e and not next', function (done) {
-    function removeListener (e) {
-      e.should.have.property('event').and.equal('test');
-      e.should.have.property('fn').and.equal(test);
-      done();
-    }
-
-    function test () {}
-
-    events.on('removeListener', removeListener);
-    events.on('test', test);
-    events.removeListener('test', test);
-  });
-});
-
 describe('once()', function () {
   var i = 0;
 
-  function listener1 (e, callback) {
+  function listener1 (callback) {
+    this.should.equal(events);
     setTimeout(function () {
       i++;
       callback();
@@ -162,7 +152,8 @@ describe('once()', function () {
 
   it('should register eventlisteners', function () {
     events.once('test-once', listener1);
-    events._events.should.have.property('test-once');
+    // commented out, because it's an Emitter implementation detail
+    // events._events.should.have.property('test-once');
   });
 
   describe('eventlisteners', function () {
@@ -176,6 +167,37 @@ describe('once()', function () {
         });
       });
     });
+  });
+});
+
+describe('once() 2', function () {
+  it('should emit with no argument', function (done) {
+    events.once('once-no-arg', function (next) {
+      (typeof next).should.equal('function');
+      next();
+      done();
+    });
+
+    events.emit('once-no-arg');
+  });
+
+  it('should emit with only data argument', function (done) {
+    events.once('once-data-only', function (e, next) {
+      e.should.equal(1);
+      next();
+      done();
+    });
+
+    events.emit('once-data-only', 1);
+  });
+
+  it('should emit with only callback argument', function (done) {
+    events.once('once-function-only', function (next) {
+      (typeof next).should.equal('function');
+      next();
+    });
+
+    events.emit('once-function-only', done);
   });
 });
 
