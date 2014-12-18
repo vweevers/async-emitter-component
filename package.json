@@ -1,6 +1,6 @@
 {
   "name": "async-emitter-component",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Event emitter with asynchronous listeners and interruption",
   "main": "index.js",
   "scripts": {
