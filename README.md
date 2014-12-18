@@ -56,7 +56,7 @@ differences which should be noted.
   asynchronously (through setImmediate) and thus code suceeding `.emit()` will
   be executed before any event listeners.
 * Interupt the callback chain in async listeners by calling the callback with
-  the error as the first parameter; in sync listeners by throwing an Error.
+  the error as the first parameter.
 
 
 ## Usage

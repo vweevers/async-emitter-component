@@ -238,22 +238,3 @@ describe('all overriden methods', function () {
     });
   });
 });
-
-describe('Sync listener returning an Error', function () {
-  function err () {
-    throw new Error('Die!');
-  }
-
-  it('should abort the listener chain', function (done) {
-    events.on('errorTest', err);
-    events.on('errorTest', function () {
-      // Just make sure this is never run
-      true.should.equal(false);
-    });
-
-    events.emit('errorTest', function (err) {
-      err.should.be.instanceOf(Error);
-      done();
-    });
-  });
-});
