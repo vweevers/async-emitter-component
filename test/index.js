@@ -100,7 +100,7 @@ describe('eventlisteners', function () {
 describe('next(err)', function () {
   it('should abort the callback chain', function (done) {
     events.on('err', function (e, next) {
-      next(1);
+      next(new Error('ok'));
     });
 
     events.on('err', function (e, next) {
@@ -108,7 +108,7 @@ describe('next(err)', function () {
     });
 
     events.emit('err', function (err) {
-      err.should.equal(1);
+      err.message.should.equal('ok');
       done();
     });
   });
