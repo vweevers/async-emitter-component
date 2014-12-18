@@ -73,26 +73,6 @@ nothing new here.
 Executes all listeners for the event in order with the supplied data argument.
 The optional callback is called when all of the listeners are done.
 
-### `.first(event, new)`
-
-Adds a listener to the beginning of the listeners array for the specified event.
-
-### `.at(event, index, listener)`
-
-Adds a listener at the specified index in the listeners array for the specified
-event.
-
-### `.before(event, target, listener)`
-
-Adds a listener before the target listener in the listeners array for the
-specified event.
-
-### `.after(event, target, listener)`
-
-Adds a listener after the target listener in the listeners array for the
-specified event.
-
-
 ## Contribution
 
 1. Create an issue and tell me what you're gonna do, just to make sure there's
